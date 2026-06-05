@@ -263,10 +263,6 @@
             <option value="other">Other</option>
           </select>
         </div>
-        <div class="field">
-          <label>Business Interest Area <span style="opacity:0.5;font-size:10px;text-transform:none;letter-spacing:0">(optional)</span></label>
-          <input type="text" id="reg-interest" placeholder="e.g. Fashion, Food, Education, Beauty, Services…" />
-        </div>
         <button class="btn-primary" id="btn-start" onclick="startQuiz()">Start Assessment →</button>
       </div>
       <div style="text-align:center; margin-top:20px;">
@@ -523,7 +519,6 @@
     userData = {
       name, contact, location,
       status:   document.getElementById('reg-status').value,
-      interest: document.getElementById('reg-interest').value.trim(),
       started_at: new Date().toISOString()
     };
     document.getElementById('userTag').textContent = '👤 ' + name;
@@ -636,7 +631,7 @@
   function restartAll() {
     resetAll();
     userData = {};
-    ['reg-name','reg-contact','reg-location','reg-interest'].forEach(id => document.getElementById(id).value = '');
+    ['reg-name','reg-contact','reg-location'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('reg-status').value = '';
     showScreen('screen-reg');
   }
