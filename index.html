@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrepreneur Mapping Circle — She Rises</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep:  #1C1525;
+    --plum:  #5C3D5E;
+    --rose:  #C2716A;
+    --gold:  #C9A96E;
+    --heal:  #7DA99A;
+    --grow:  #9BBB85;
+    --cream: #FAF6F1;
+    --mist:  #EDE5DC;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--deep); min-height: 100vh; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .hero {
+    background: var(--deep); position: relative; overflow: hidden;
+    padding: 60px 40px 50px; text-align: center;
+  }
+  .orb { position: absolute; border-radius: 50%; pointer-events: none; }
+  .orb1 { width: 500px; height: 500px; top: -200px; right: -100px; background: radial-gradient(circle, var(--rose) 0%, transparent 70%); opacity: 0.12; }
+  .orb2 { width: 300px; height: 300px; bottom: -150px; left: -50px; background: radial-gradient(circle, var(--gold) 0%, transparent 70%); opacity: 0.10; }
+  .orb3 { width: 180px; height: 180px; top: 20px; left: 35%; background: radial-gradient(circle, var(--heal) 0%, transparent 70%); opacity: 0.15; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; position: relative; z-index: 2; }
+  .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(38px,7vw,72px); font-weight: 300; color: white; line-height: 1.05; position: relative; z-index: 2; margin-bottom: 8px; }
+  .hero-title em { font-style: italic; color: var(--rose); }
+  .hero-sub { font-family: 'Cormorant Garamond', serif; font-size: clamp(16px,2.5vw,21px); color: rgba(255,255,255,0.45); font-style: italic; position: relative; z-index: 2; margin-bottom: 28px; }
+  .pills { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 2; }
+  .pill { padding: 6px 18px; border-radius: 30px; font-size: 12px; letter-spacing: 1px; border: 1px solid; font-weight: 500; }
+  .pill-heal { color: var(--heal); border-color: rgba(125,169,154,0.45); }
+  .pill-grow { color: #9BBB85; border-color: rgba(155,187,133,0.45); }
+  .pill-lead { color: var(--rose); border-color: rgba(194,113,106,0.45); }
+  .pill-build { color: var(--gold); border-color: rgba(201,169,110,0.45); }
+
+  .main { max-width: 760px; margin: 0 auto; padding: 40px 20px 160px; }
+
+  .reg-card { background: white; border-radius: 24px; padding: 40px 36px; border: 1.5px solid var(--mist); box-shadow: 0 4px 40px rgba(28,21,37,0.06); animation: fadeUp 0.5s ease both; }
+  .reg-heading { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; margin-bottom: 6px; }
+  .reg-sub { font-size: 14px; color: var(--plum); margin-bottom: 32px; line-height: 1.5; }
+  .field-group { display: flex; flex-direction: column; gap: 18px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--plum); font-weight: 500; }
+  .field input, .field select { padding: 13px 16px; border-radius: 12px; border: 1.5px solid var(--mist); background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--deep); outline: none; transition: border-color 0.2s; -webkit-appearance: none; appearance: none; }
+  .field input:focus, .field select:focus { border-color: var(--gold); background: white; }
+  .field input::placeholder { color: rgba(92,61,94,0.35); }
+  .btn-primary { margin-top: 10px; width: 100%; padding: 15px 24px; background: var(--deep); color: white; border: none; border-radius: 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px; }
+  .btn-primary:hover { background: var(--plum); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(28,21,37,0.15); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .progress-wrap { background: white; border-bottom: 1px solid var(--mist); padding: 14px 40px; position: sticky; top: 0; z-index: 50; display: flex; align-items: center; gap: 14px; }
+  .progress-track { flex: 1; height: 5px; background: var(--mist); border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--heal), var(--gold), var(--rose)); border-radius: 10px; transition: width 0.4s ease; }
+  .progress-label { font-size: 12px; color: var(--plum); min-width: 64px; text-align: right; }
+  .user-tag { font-size: 13px; color: var(--plum); padding: 4px 12px; background: rgba(92,61,94,0.07); border-radius: 20px; }
+
+  .levels-guide { background: white; border-radius: 20px; padding: 28px; border: 1.5px solid var(--mist); margin-bottom: 16px; }
+  .levels-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; margin-bottom: 18px; }
+  .levels-row { display: flex; flex-direction: column; gap: 10px; }
+  .level-item { display: flex; align-items: flex-start; gap: 14px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--mist); transition: all 0.3s; }
+  .level-item.active-level { border-color: var(--gold); background: rgba(201,169,110,0.07); }
+  .level-range { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--mist); min-width: 52px; line-height: 1; flex-shrink: 0; transition: color 0.3s; }
+  .level-item.active-level .level-range { color: var(--gold); }
+  .level-info h4 { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+  .level-info p { font-size: 13px; color: var(--plum); line-height: 1.5; }
+
+  .q-card { background: white; border-radius: 20px; margin-bottom: 16px; border: 1.5px solid var(--mist); box-shadow: 0 2px 20px rgba(28,21,37,0.04); overflow: hidden; transition: border-color 0.3s, box-shadow 0.3s; animation: fadeUp 0.4s ease both; }
+  .q-card.answered { border-color: rgba(201,169,110,0.4); box-shadow: 0 4px 24px rgba(201,169,110,0.1); }
+  .q-header { padding: 20px 24px 0; display: flex; align-items: flex-start; gap: 14px; }
+  .q-num { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 300; line-height: 1; color: var(--mist); flex-shrink: 0; transition: color 0.3s; }
+  .q-card.answered .q-num { color: var(--gold); }
+  .q-text { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; line-height: 1.25; padding-top: 6px; }
+  .q-options { padding: 14px 24px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .opt-label { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-radius: 12px; cursor: pointer; border: 1.5px solid var(--mist); background: var(--cream); transition: all 0.2s; font-size: 15px; }
+  .opt-label:hover { border-color: var(--gold); background: rgba(201,169,110,0.06); }
+  .opt-label input[type="radio"] { display: none; }
+  .opt-dot { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; border: 2px solid var(--mist); background: white; transition: all 0.2s; position: relative; }
+  .opt-dot::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--gold); transform: scale(0); transition: transform 0.2s; }
+  .opt-label.selected { border-color: var(--gold); background: rgba(201,169,110,0.08); font-weight: 500; }
+  .opt-label.selected .opt-dot { border-color: var(--gold); }
+  .opt-label.selected .opt-dot::after { transform: scale(1); }
+  .opt-val { margin-left: auto; font-size: 11px; color: var(--plum); opacity: 0.35; }
+  .opt-label.selected .opt-val { opacity: 0.6; color: var(--gold); }
+
+  .result-panel { position: fixed; bottom: 0; left: 0; right: 0; z-index: 60; background: var(--deep); box-shadow: 0 -8px 40px rgba(28,21,37,0.25); padding: 18px 40px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; justify-content: center; }
+  .result-score-wrap { display: flex; align-items: baseline; gap: 6px; }
+  .result-num { font-family: 'Cormorant Garamond', serif; font-size: 52px; font-weight: 300; color: var(--gold); line-height: 1; }
+  .result-max { font-size: 14px; color: rgba(255,255,255,0.3); }
+  .result-divider { width: 1px; height: 50px; background: rgba(255,255,255,0.1); }
+  .result-level-wrap { flex: 1; min-width: 200px; }
+  .result-level-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 4px; }
+  .result-level { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: white; line-height: 1.1; }
+  .result-desc { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 3px; line-height: 1.4; }
+  .result-bar-wrap { flex: 1; min-width: 160px; }
+  .result-bar-label { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
+  .result-bar-track { height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+  .result-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--heal), var(--gold), var(--rose)); border-radius: 10px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+  .result-reset { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); border-radius: 30px; padding: 8px 20px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; transition: all 0.2s; }
+  .result-reset:hover { background: rgba(255,255,255,0.12); color: white; }
+
+  .thankyou-wrap { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+  .thankyou-card { background: white; border-radius: 28px; padding: 52px 44px; max-width: 560px; width: 100%; text-align: center; border: 1.5px solid var(--mist); box-shadow: 0 8px 60px rgba(28,21,37,0.08); animation: fadeUp 0.5s ease both; }
+  .ty-icon { font-size: 56px; margin-bottom: 20px; }
+  .ty-title { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 300; line-height: 1.1; margin-bottom: 8px; }
+  .ty-title em { color: var(--rose); font-style: italic; }
+  .ty-name { font-size: 15px; color: var(--plum); margin-bottom: 24px; }
+  .ty-score-box { background: var(--deep); border-radius: 18px; padding: 24px; margin: 24px 0; color: white; }
+  .ty-score-box .ts-num { font-family: 'Cormorant Garamond', serif; font-size: 64px; font-weight: 300; color: var(--gold); line-height: 1; }
+  .ty-score-box .ts-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+  .ty-score-box .ts-level { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; margin-top: 6px; }
+  .ty-score-box .ts-desc { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+  .ty-cta { font-size: 14px; color: var(--plum); line-height: 1.6; margin-top: 20px; }
+  .ty-cta strong { color: var(--gold); }
+  .btn-restart { margin-top: 28px; padding: 13px 32px; background: var(--deep); color: white; border: none; border-radius: 40px; font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer; transition: all 0.2s; }
+  .btn-restart:hover { background: var(--plum); transform: translateY(-1px); }
+
+  .saving-overlay { position: fixed; inset: 0; background: rgba(28,21,37,0.6); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .saving-overlay.show { display: flex; }
+  .saving-box { background: white; border-radius: 20px; padding: 36px 44px; text-align: center; }
+  .saving-spinner { width: 40px; height: 40px; border: 3px solid var(--mist); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  .saving-box p { font-size: 15px; color: var(--plum); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .save-toast { position: fixed; top: 20px; right: 20px; z-index: 200; background: var(--deep); color: white; padding: 12px 20px; border-radius: 12px; font-size: 13px; display: none; border: 1px solid rgba(201,169,110,0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+  .save-toast.show { display: block; animation: fadeUp 0.3s ease; }
+  .save-toast.error { border-color: rgba(194,113,106,0.5); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .q-card:nth-child(1) { animation-delay: 0.05s; }
+  .q-card:nth-child(2) { animation-delay: 0.10s; }
+  .q-card:nth-child(3) { animation-delay: 0.15s; }
+  .q-card:nth-child(4) { animation-delay: 0.20s; }
+  .q-card:nth-child(5) { animation-delay: 0.25s; }
+  .q-card:nth-child(6) { animation-delay: 0.30s; }
+  .q-card:nth-child(7) { animation-delay: 0.35s; }
+  .q-card:nth-child(8) { animation-delay: 0.40s; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 44px 24px 36px; }
+    .main { padding: 24px 16px 180px; }
+    .result-panel { padding: 16px 20px; }
+    .result-divider { display: none; }
+    .field-row { grid-template-columns: 1fr; }
+    .reg-card { padding: 28px 20px; }
+    .thankyou-card { padding: 36px 24px; }
+    .progress-wrap { padding: 12px 16px; gap: 8px; }
+    .user-tag { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <p class="hero-eyebrow">She Rises · Self-Assessment</p>
+  <h1 class="hero-title">Entrepreneur <em>Mapping</em> Circle</h1>
+  <p class="hero-sub">Discover where you stand on your journey</p>
+  <div class="pills">
+    <span class="pill pill-heal">🌿 Heal</span>
+    <span class="pill pill-grow">🌱 Grow</span>
+    <span class="pill pill-lead">✨ Lead</span>
+    <span class="pill pill-build">🏛 Build</span>
+  </div>
+</div>
+
+<!-- SCREEN 1: REGISTRATION -->
+<div class="screen active" id="screen-reg">
+  <div class="main">
+    <div class="reg-card">
+      <h2 class="reg-heading">Welcome! Tell us about yourself</h2>
+      <p class="reg-sub">Before we begin, we'd love to know who you are. Your responses will be saved securely to help Rushna support you better.</p>
+      <div class="field-group">
+        <div class="field">
+          <label>Full Name *</label>
+          <input type="text" id="reg-name" placeholder="e.g. Fatima Al-Rashidi" autocomplete="name" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Contact Number *</label>
+            <input type="tel" id="reg-contact" placeholder="+966 5X XXX XXXX" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label>City / Location *</label>
+            <input type="text" id="reg-location" placeholder="e.g. Riyadh, Al Khobar" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Current Status</label>
+          <select id="reg-status">
+            <option value="">Select your current status</option>
+            <option value="housewife">Housewife / Full-time at home</option>
+            <option value="employed">Employed (looking to start a side business)</option>
+            <option value="freelancer">Freelancer</option>
+            <option value="student">Student</option>
+            <option value="existing-business">Already running a small business</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Business Interest Area <span style="opacity:0.5;font-size:10px;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <input type="text" id="reg-interest" placeholder="e.g. Fashion, Food, Education, Beauty, Services…" />
+        </div>
+        <button class="btn-primary" id="btn-start" onclick="startQuiz()">Start Assessment →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2: QUIZ -->
+<div class="screen" id="screen-quiz">
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 of 8</div>
+    <div class="user-tag" id="userTag">👤 —</div>
+  </div>
+
+  <div class="main">
+    <div class="levels-guide">
+      <p class="levels-title">Your Entrepreneur Levels</p>
+      <div class="levels-row" id="levelsGuide">
+        <div class="level-item" data-min="8" data-max="15">
+          <div class="level-range">8–15</div>
+          <div class="level-info"><h4>🌱 Dreaming Entrepreneur</h4><p>Your vision is forming — full of potential and possibility.</p></div>
+        </div>
+        <div class="level-item" data-min="16" data-max="23">
+          <div class="level-range">16–23</div>
+          <div class="level-info"><h4>🚶 Emerging Entrepreneur</h4><p>You're stepping forward with growing clarity. Keep going.</p></div>
+        </div>
+        <div class="level-item" data-min="24" data-max="31">
+          <div class="level-range">24–31</div>
+          <div class="level-info"><h4>🚀 Growing Entrepreneur</h4><p>Strong foundations and clear direction. Ready to accelerate.</p></div>
+        </div>
+        <div class="level-item" data-min="32" data-max="32">
+          <div class="level-range">32</div>
+          <div class="level-info"><h4>👑 Empowered Entrepreneur</h4><p>You have everything it takes. The only thing left is to act boldly.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-card" id="card1">
+      <div class="q-header"><div class="q-num">01</div><div class="q-text">How clear is my business idea?</div></div>
+      <div class="q-options">
+        <label class="opt-label"><input type="radio" name="q1" value="1"><div class="opt-dot"></div>I have no idea yet<span class="opt-val">1pt</span></label>
+        <label class="opt-label"><input type="radio" name="q1" value="2"><div class="opt-dot"></div>I have a few scattered ideas<span class="opt-val">2pt</span></label>
+        <label class="opt-label"><input type="radio" name="q1" value="3"><div class="opt-dot"></div>I have one clear idea<span class="opt-val">3pt</span></label>
+        <label class="opt-label"><input type="radio" name="q1" value="4"><div class="opt-dot"></div>I have a clear idea with a plan<span class="opt-val">4pt</span></label>
+      </div>
+    </div>
+
+    <div class="q-card" id="card2">
+      <div class="q-header"><div class="q-num">02</div><div class="q-text">Why do I want to start a business?</div></div>
+      <div class="q-options">
+        <label class="opt-label"><input type="radio" name="q2" value="1"><div class="opt-dot"></div>Not sure yet<span class="opt-val">1pt</span></label>
+        <label class="opt-label"><input type="radio" name="q2" value="2"><div class="opt-dot"></div>Extra income<span class="opt-val">2pt</span></label>
+        <label class="opt-label"><input type="radio" name="q2" value="3"><div class="opt-dot"></div>Financial independence<span class="opt-val">3pt</span></label>
+        <label class="opt-label"><input type="radio" name="q2" value="4"><div class="opt-dot"></div>Impact &amp; legacy<span class="opt-val">4pt</span></label>
+      </div>
+    </div>
+
+    <div class="q-card" id="card3">
+      <div class="q-header"><div class="q-num">03</div><div class="q-text">How confident am I about starting?</div></div>
+      <div class="q-options">
+        <label class="opt-label"><input type="radio" name="q3" value="1"><div class="opt-dot"></div>Very scared, not ready<span class="opt-val">1pt</span></label>
+        <label class="opt-label"><input type="radio" name="q3" value="2"><div class="opt-dot"></div>Unsure but interested<span class="opt-val">2pt</span></label>
+        <label class="opt-label"><input type="radio" name="q3" value="3"><div class="opt-dot"></div>Mostly confident<span class="opt-val">3pt</span></label>
+        <label class="opt-label"><input type="radio" name="q3" value="4"><div class="opt-dot"></div>Ready to take action now<span class="opt-val">4pt</span></label>
+      </div>
+    </div>
+
+    <div class="q-card" id="card4">
+      <div class="q-header"><div class="q-num">04</div><div class="q-text">How prepared am I with business skills?</div></div>
+      <div class="q-options">
+        <label class="opt-label"><input type="radio" name="q4" value="1"><div class="opt-dot"></div>No relevant skills yet<span class="opt-val">1pt</span></label>
+        <label class="opt-label"><input type="radio" name="q4" value="2"><div class="opt-dot"></div>Basic awareness<span class="opt-val">2pt</span></label>
+        <label class="opt-label"><input type="radio" name="q4" value="3"><div class="opt-dot"></div>Good skills in my area<span class="opt-val">3pt</span></label>
+        <label class="opt-label"><input type="radio" name="q4" value="4"><div class="opt-dot"></div>Strong skills &amp; experience<span class="opt-val">4pt</span></label>
+      </div>
+    </div>
+
+    <div class="q-card" id="card5">
+      <div class="q-header"><div class="q-num">05</div><div class="q-text">How much support do I have around me?</div></div>
+      <div class="q-options">
+        <label class="opt-label"><input type="radio" name="q5" value="1"><div class="opt-dot"></div>No support at all<span class="opt-val">1pt</span></label>
+        <label class="opt-label"><input type="radio" name="q5" value="2"><div class="opt-dot"></div>Limited support<span class="opt-val">2pt</span></label>
+        <label class="opt-label"><input type="radio" name="q5" value="3"><div class="opt-dot"></div>Some people believe in me<span class="opt-val">3pt</span></label>
+        <label class="opt-label"><input type="radio" name="q5" value="4"><div class="opt-dot"></div>Strong family &amp; network support<span class="opt-val">4pt</span></label>
+      </div>
+    </div>
+
+    <div class="q-card" id="card6">
+      <div class="q-header"><div class="q-num">06</div><div class="q-text">How financially ready am I?</div></div>
+      <div class="q-options">
+        <label class="opt-label"><input type="radio" name="q6" value="1"><div class="opt-dot"></div>Not financially ready<span class="opt-val">1pt</span></label>
+        <label class="opt-label"><input type="radio" name="q6" value="2"><div class="opt-dot"></div>Small savings available<span class="opt-val">2pt</span></label>
+        <label class="opt-label"><input type="radio" name="q6" value="3"><div class="opt-dot"></div>Moderate resources<span class="opt-val">3pt</span></label>
+        <label class="opt-label"><input type="radio" name="q6" value="4"><div class="opt-dot"></div>Ready to invest in my idea<span class="opt-val">4pt</span></label>
+      </div>
+    </div>
+
+    <div class="q-card" id="card7">
+      <div class="q-header"><div class="q-num">07</div><div class="q-text">How often do I actively work on my business dream?</div></div>
+      <div class="q-options">
+        <label class="opt-label"><input type="radio" name="q7" value="1"><div class="opt-dot"></div>Only think about it sometimes<span class="opt-val">1pt</span></label>
+        <label class="opt-label"><input type="radio" name="q7" value="2"><div class="opt-dot"></div>Occasionally take small steps<span class="opt-val">2pt</span></label>
+        <label class="opt-label"><input type="radio" name="q7" value="3"><div class="opt-dot"></div>Weekly purposeful action<span class="opt-val">3pt</span></label>
+        <label class="opt-label"><input type="radio" name="q7" value="4"><div class="opt-dot"></div>Daily focused action<span class="opt-val">4pt</span></label>
+      </div>
+    </div>
+
+    <div class="q-card" id="card8">
+      <div class="q-header"><div class="q-num">08</div><div class="q-text">How do I respond when I face challenges?</div></div>
+      <div class="q-options">
+        <label class="opt-label"><input type="radio" name="q8" value="1"><div class="opt-dot"></div>Usually give up or avoid<span class="opt-val">1pt</span></label>
+        <label class="opt-label"><input type="radio" name="q8" value="2"><div class="opt-dot"></div>Hesitate but eventually continue<span class="opt-val">2pt</span></label>
+        <label class="opt-label"><input type="radio" name="q8" value="3"><div class="opt-dot"></div>Learn, adapt and keep going<span class="opt-val">3pt</span></label>
+        <label class="opt-label"><input type="radio" name="q8" value="4"><div class="opt-dot"></div>See challenges as opportunities<span class="opt-val">4pt</span></label>
+      </div>
+    </div>
+
+    <div id="submit-wrap" style="display:none; text-align:center; margin-top:8px;">
+      <button class="btn-primary" style="max-width:340px;" onclick="submitResults()">See My Results →</button>
+    </div>
+
+    <p style="text-align:center;font-size:13px;color:var(--plum);opacity:0.5;margin-top:20px">
+      Facilitated by <strong style="opacity:1">Rushna P</strong> · Corporate Psychologist &nbsp;·&nbsp; <strong style="opacity:1">Growth Space</strong>
+    </p>
+  </div>
+
+  <div class="result-panel">
+    <div class="result-score-wrap">
+      <div class="result-num" id="scoreNum">0</div>
+      <div class="result-max">/ 32</div>
+    </div>
+    <div class="result-divider"></div>
+    <div class="result-level-wrap">
+      <div class="result-level-label">Your Level</div>
+      <div class="result-level" id="levelText">Answer the questions above</div>
+      <div class="result-desc" id="levelDesc"></div>
+    </div>
+    <div class="result-bar-wrap">
+      <div class="result-bar-label">Score Progress</div>
+      <div class="result-bar-track"><div class="result-bar-fill" id="resultBar"></div></div>
+    </div>
+    <button class="result-reset" onclick="resetAll()">↺ Reset</button>
+  </div>
+</div>
+
+<!-- SCREEN 3: THANK YOU -->
+<div class="screen" id="screen-thanks">
+  <div class="thankyou-wrap">
+    <div class="thankyou-card">
+      <div class="ty-icon">🌸</div>
+      <h2 class="ty-title">Well done, <em id="ty-name-display">—</em></h2>
+      <p class="ty-name">You've taken the first step on your entrepreneurial journey</p>
+      <div class="ty-score-box">
+        <div class="ts-label">Your Score</div>
+        <div class="ts-num" id="ty-score">0</div>
+        <div style="color:rgba(255,255,255,0.3);font-size:12px">out of 32</div>
+        <div class="ts-level" id="ty-level">—</div>
+        <div class="ts-desc" id="ty-desc">—</div>
+      </div>
+      <p class="ty-cta">
+        Your results have been saved. Rushna will follow up with personalised guidance.<br><br>
+        Ready to take the next step? <strong>Growth Space</strong> empowers women entrepreneurs with the tools, mindset, and community to build businesses that matter.
+      </p>
+      <button class="btn-restart" onclick="restartAll()">Take Again ↺</button>
+    </div>
+  </div>
+</div>
+
+<!-- saving overlay -->
+<div class="saving-overlay" id="savingOverlay">
+  <div class="saving-box">
+    <div class="saving-spinner"></div>
+    <p>Saving your responses…</p>
+  </div>
+</div>
+
+<div class="save-toast" id="saveToast"></div>
+
+<script>
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyWbH86AAO0WQleSKKNxki1zc0Xv-ue5MU2bOlQI4XSiVVfIzvmL98HJnO4cwAU4lorkw/exec';
+
+  const levels = [
+    { min: 8,  max: 15, label: '🌱 Dreaming Entrepreneur',  desc: 'Your vision is forming — full of potential.' },
+    { min: 16, max: 23, label: '🚶 Emerging Entrepreneur',   desc: 'Growing clarity. Your momentum is building.' },
+    { min: 24, max: 31, label: '🚀 Growing Entrepreneur',    desc: 'Strong foundations. Ready to accelerate.' },
+    { min: 32, max: 32, label: '👑 Empowered Entrepreneur',  desc: 'You have what it takes. Time to act boldly.' }
+  ];
+
+  let userData = {};
+  let answers  = {};
+
+  function startQuiz() {
+    const name     = document.getElementById('reg-name').value.trim();
+    const contact  = document.getElementById('reg-contact').value.trim();
+    const location = document.getElementById('reg-location').value.trim();
+    if (!name || !contact || !location) {
+      alert('Please fill in your Name, Contact Number, and Location to continue.');
+      return;
+    }
+    userData = {
+      name, contact, location,
+      status:   document.getElementById('reg-status').value,
+      interest: document.getElementById('reg-interest').value.trim(),
+      started_at: new Date().toISOString()
+    };
+    document.getElementById('userTag').textContent = '👤 ' + name;
+    showScreen('screen-quiz');
+    attachOptionListeners();
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function attachOptionListeners() {
+    document.querySelectorAll('#screen-quiz .opt-label').forEach(label => {
+      label.addEventListener('click', () => {
+        const inp  = label.querySelector('input');
+        const name = inp.name;
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+          r.closest('.opt-label').classList.remove('selected');
+        });
+        label.classList.add('selected');
+        answers[name] = parseInt(inp.value);
+        setTimeout(calculate, 40);
+      });
+    });
+  }
+
+  function calculate() {
+    let score = 0, answered = 0;
+    for (let i = 1; i <= 8; i++) {
+      const card = document.getElementById('card' + i);
+      if (answers['q' + i]) { score += answers['q' + i]; answered++; card.classList.add('answered'); }
+      else { card.classList.remove('answered'); }
+    }
+    document.getElementById('progressFill').style.width = (answered / 8 * 100) + '%';
+    document.getElementById('progressLabel').textContent = answered + ' of 8';
+    document.getElementById('scoreNum').textContent = score;
+    document.getElementById('resultBar').style.width = score > 0 ? Math.max(0, (score - 8) / 24 * 100) + '%' : '0%';
+    const lv = levels.find(l => score >= l.min && score <= l.max);
+    if (lv) { document.getElementById('levelText').textContent = lv.label; document.getElementById('levelDesc').textContent = lv.desc; }
+    else if (answered === 0) { document.getElementById('levelText').textContent = 'Answer the questions above'; document.getElementById('levelDesc').textContent = ''; }
+    document.querySelectorAll('.level-item').forEach(item => {
+      item.classList.toggle('active-level', !!(lv && parseInt(item.dataset.min) === lv.min));
+    });
+    document.getElementById('submit-wrap').style.display = answered === 8 ? 'block' : 'none';
+  }
+
+  async function submitResults() {
+    const score = Object.values(answers).reduce((a, b) => a + b, 0);
+    const lv    = levels.find(l => score >= l.min && score <= l.max);
+    const payload = {
+      ...userData,
+      q1: answers.q1, q2: answers.q2, q3: answers.q3, q4: answers.q4,
+      q5: answers.q5, q6: answers.q6, q7: answers.q7, q8: answers.q8,
+      total_score:  score,
+      level_label:  lv ? lv.label : '',
+      submitted_at: new Date().toISOString()
+    };
+    document.getElementById('savingOverlay').classList.add('show');
+    await saveToSheets(payload);
+    document.getElementById('savingOverlay').classList.remove('show');
+    document.getElementById('ty-name-display').textContent = userData.name.split(' ')[0];
+    document.getElementById('ty-score').textContent = score;
+    document.getElementById('ty-level').textContent = lv ? lv.label : '';
+    document.getElementById('ty-desc').textContent  = lv ? lv.desc  : '';
+    showScreen('screen-thanks');
+    showToast('✅ Your responses have been saved!', false);
+  }
+
+  async function saveToSheets(payload) {
+    try {
+      await fetch(SHEETS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return true;
+    } catch (e) {
+      console.error('Save error:', e);
+      showToast('⚠️ Could not save — check connection', true);
+      return false;
+    }
+  }
+
+  function showToast(msg, isError) {
+    const t = document.getElementById('saveToast');
+    t.textContent = msg;
+    t.classList.toggle('error', isError);
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function resetAll() {
+    answers = {};
+    document.querySelectorAll('#screen-quiz input[type="radio"]').forEach(r => r.checked = false);
+    document.querySelectorAll('#screen-quiz .opt-label').forEach(l => l.classList.remove('selected'));
+    document.querySelectorAll('.q-card').forEach(c => c.classList.remove('answered'));
+    document.querySelectorAll('.level-item').forEach(i => i.classList.remove('active-level'));
+    document.getElementById('scoreNum').textContent = '0';
+    document.getElementById('levelText').textContent = 'Answer the questions above';
+    document.getElementById('levelDesc').textContent = '';
+    document.getElementById('resultBar').style.width = '0%';
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('progressLabel').textContent = '0 of 8';
+    document.getElementById('submit-wrap').style.display = 'none';
+  }
+
+  function restartAll() {
+    resetAll();
+    userData = {};
+    ['reg-name','reg-contact','reg-location','reg-interest'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('reg-status').value = '';
+    showScreen('screen-reg');
+  }
+</script>
+</body>
+</html>
