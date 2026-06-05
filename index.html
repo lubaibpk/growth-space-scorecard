@@ -669,47 +669,82 @@
     }
   }
 
+  // ── ADMIN CONFIG: paste your Sheet's published CSV URL here ──
+  // How to get it: File → Share → Publish to web → Sheet1 → CSV → Copy link
+  const SHEET_CSV_URL = 'YOUR_SHEET_CSV_URL';
+  // Example: https://docs.google.com/spreadsheets/d/SHEET_ID/pub?gid=0&single=true&output=csv
+
   function loadAdminData() {
     document.getElementById('adminTableContainer').innerHTML =
       '<div class="admin-loading"><div class="admin-spinner"></div><p>Loading responses…</p></div>';
 
-    // Remove any previous script tag
-    const old = document.getElementById('gsScript');
-    if (old) old.remove();
-
-    // Set global callback for JSONP
-    window._gsCallback = function(json) {
-      if (json && json.data && json.data.length > 0) {
-        allRows = json.data;
-        renderTable(allRows);
-        renderStats(allRows);
-      } else {
-        document.getElementById('adminTableContainer').innerHTML =
-          '<div class="no-data">📭 No responses yet. Submit the form first, then refresh.</div>';
-        resetStats();
-      }
-    };
-
-    // Inject script tag — Google Apps Script supports callback param
-    const s = document.createElement('script');
-    s.id  = 'gsScript';
-    s.src = SHEETS_URL + '?callback=_gsCallback&t=' + Date.now();
-    s.onerror = () => {
+    if (SHEET_CSV_URL === 'YOUR_SHEET_CSV_URL') {
       document.getElementById('adminTableContainer').innerHTML = `
         <div class="no-data" style="padding:40px 24px;">
-          <div style="font-size:28px;margin-bottom:12px;">⚠️</div>
-          <div style="font-size:15px;font-weight:600;color:var(--deep);margin-bottom:6px;">Could not load data</div>
-          <div style="font-size:13px;color:var(--plum);margin-bottom:16px;">
-            Make sure your Apps Script <strong>doGet</strong> function is deployed and access is set to <strong>Anyone</strong>.
+          <div style="font-size:28px;margin-bottom:10px;">⚙️</div>
+          <div style="font-size:15px;font-weight:600;color:var(--deep);margin-bottom:6px;">One-time setup needed</div>
+          <div style="font-size:13px;color:var(--plum);line-height:1.7;">
+            In your Google Sheet:<br>
+            <strong>File → Share → Publish to web → Sheet1 → CSV → Publish → Copy the URL</strong><br><br>
+            Then share that URL with Lubaib to update the dashboard.
           </div>
-          <a href="https://docs.google.com/spreadsheets" target="_blank"
-            style="display:inline-block;padding:10px 24px;background:var(--deep);color:white;border-radius:10px;text-decoration:none;font-size:14px;">
-            Open Google Sheets →
-          </a>
         </div>`;
-      resetStats();
-    };
-    document.body.appendChild(s);
+      return;
+    }
+
+    fetch(SHEET_CSV_URL)
+      .then(r => r.text())
+      .then(csv => {
+        const rows = parseCSV(csv);
+        if (rows.length <= 1) {
+          document.getElementById('adminTableContainer').innerHTML =
+            '<div class="no-data">📭 No responses yet. They will appear here after participants submit.</div>';
+          resetStats();
+          return;
+        }
+        const headers = rows[0].map(h => h.trim().toLowerCase().replace(/ /g,'_'));
+        allRows = rows.slice(1).map(row => {
+          const obj = {};
+          headers.forEach((h,i) => obj[h] = (row[i]||'').trim());
+          return obj;
+        }).filter(r => r.name); // skip empty rows
+        renderTable(allRows);
+        renderStats(allRows);
+      })
+      .catch(() => {
+        document.getElementById('adminTableContainer').innerHTML = `
+          <div class="no-data" style="padding:40px 24px;">
+            <div style="font-size:28px;margin-bottom:10px;">⚠️</div>
+            <div style="font-size:15px;font-weight:600;color:var(--deep);margin-bottom:6px;">Could not load data</div>
+            <div style="font-size:13px;color:var(--plum);margin-bottom:16px;">
+              Make sure the sheet is published to web as CSV and the URL is correct.
+            </div>
+            <a href="https://docs.google.com/spreadsheets" target="_blank"
+              style="display:inline-block;padding:10px 24px;background:var(--deep);color:white;border-radius:10px;text-decoration:none;font-size:14px;">
+              Open Google Sheets →
+            </a>
+          </div>`;
+        resetStats();
+      });
+  }
+
+  function parseCSV(text) {
+    const rows = [];
+    const lines = text.split('\n');
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      const cols = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') { inQ = !inQ; }
+        else if (c === ',' && !inQ) { cols.push(cur); cur = ''; }
+        else { cur += c; }
+      }
+      cols.push(cur);
+      rows.push(cols);
+    }
+    return rows;
   }
 
   function renderTable(rows) {
