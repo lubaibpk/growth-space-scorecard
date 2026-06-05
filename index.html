@@ -702,12 +702,21 @@
           resetStats();
           return;
         }
+        // Map raw headers to internal keys
+        // Sheet headers: Timestamp,Name,Contact,Location,Status,Interest,Q1..Q8,Score,Level
         const headers = rows[0].map(h => h.trim().toLowerCase().replace(/ /g,'_'));
         allRows = rows.slice(1).map(row => {
           const obj = {};
           headers.forEach((h,i) => obj[h] = (row[i]||'').trim());
+          // normalise aliases so renderTable always finds the right keys
+          obj.name        = obj.name        || obj.full_name   || '';
+          obj.contact     = obj.contact     || obj.contact_number || '';
+          obj.location    = obj.location    || obj.city_/_location || obj['city_/_location'] || '';
+          obj.total_score = obj.total_score || obj.score       || '';
+          obj.level_label = obj.level_label || obj.level       || '';
+          obj.submitted_at= obj.submitted_at|| obj.timestamp   || '';
           return obj;
-        }).filter(r => r.name); // skip empty rows
+        }).filter(r => r.name); // skip blank rows
         renderTable(allRows);
         renderStats(allRows);
       })
@@ -794,10 +803,9 @@
     const total = rows.length;
     const avg   = total ? Math.round(rows.reduce((s,r) => s + (r.total_score||0), 0) / total) : 0;
     const today = rows.filter(r => {
-      if (!r.submitted_at) return false;
-      const d = new Date(r.submitted_at);
-      const n = new Date();
-      return d.toDateString() === n.toDateString();
+      const raw = r.submitted_at || r.timestamp || '';
+      if (!raw) return false;
+      return new Date(raw).toDateString() === new Date().toDateString();
     }).length;
     const lvCounts = {};
     rows.forEach(r => { const l = r.level_label||''; lvCounts[l] = (lvCounts[l]||0)+1; });
