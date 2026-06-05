@@ -669,40 +669,47 @@
     }
   }
 
-  async function loadAdminData() {
-    document.getElementById('adminTableContainer').innerHTML = `
-      <div class="admin-loading"><div class="admin-spinner"></div><p>Loading responses…</p></div>`;
+  function loadAdminData() {
+    document.getElementById('adminTableContainer').innerHTML =
+      '<div class="admin-loading"><div class="admin-spinner"></div><p>Loading responses…</p></div>';
 
-    try {
-      // Fetch from Google Sheets as CSV (published sheet)
-      // We reuse the Apps Script URL with a GET param to retrieve data
-      const url = SHEETS_URL + '?action=get';
-      const res = await fetch(url, { method: 'GET', mode: 'cors' });
-      const json = await res.json();
+    // Remove any previous script tag
+    const old = document.getElementById('gsScript');
+    if (old) old.remove();
 
+    // Set global callback for JSONP
+    window._gsCallback = function(json) {
       if (json && json.data && json.data.length > 0) {
         allRows = json.data;
         renderTable(allRows);
         renderStats(allRows);
       } else {
         document.getElementById('adminTableContainer').innerHTML =
-          '<div class="no-data">📭 No responses yet. They will appear here after participants submit.</div>';
+          '<div class="no-data">📭 No responses yet. Submit the form first, then refresh.</div>';
         resetStats();
       }
-    } catch (e) {
-      // Fallback: show instructions to view data
+    };
+
+    // Inject script tag — Google Apps Script supports callback param
+    const s = document.createElement('script');
+    s.id  = 'gsScript';
+    s.src = SHEETS_URL + '?callback=_gsCallback&t=' + Date.now();
+    s.onerror = () => {
       document.getElementById('adminTableContainer').innerHTML = `
         <div class="no-data" style="padding:40px 24px;">
-          <div style="font-size:32px;margin-bottom:12px;">📊</div>
-          <div style="font-size:15px;font-weight:600;color:var(--deep);margin-bottom:8px;">View responses in Google Sheets</div>
-          <div style="font-size:13px;color:var(--plum);margin-bottom:16px;">To show live data here, update your Apps Script to handle GET requests (see note below).</div>
+          <div style="font-size:28px;margin-bottom:12px;">⚠️</div>
+          <div style="font-size:15px;font-weight:600;color:var(--deep);margin-bottom:6px;">Could not load data</div>
+          <div style="font-size:13px;color:var(--plum);margin-bottom:16px;">
+            Make sure your Apps Script <strong>doGet</strong> function is deployed and access is set to <strong>Anyone</strong>.
+          </div>
           <a href="https://docs.google.com/spreadsheets" target="_blank"
             style="display:inline-block;padding:10px 24px;background:var(--deep);color:white;border-radius:10px;text-decoration:none;font-size:14px;">
             Open Google Sheets →
           </a>
         </div>`;
       resetStats();
-    }
+    };
+    document.body.appendChild(s);
   }
 
   function renderTable(rows) {
