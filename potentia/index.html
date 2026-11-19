@@ -34,10 +34,13 @@ input:focus{outline:2px solid var(--mag);border-color:transparent}
 .q{margin:0 0 18px}
 .q p{margin:0 0 8px;font-weight:600}
 .q small{display:block;font-weight:400;color:var(--mut);font-size:12.5px}
-.scale{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
-.scale button{padding:9px 0;border:1.5px solid #E3C3D8;background:#fffafd;border-radius:9px;font-size:14px;font-weight:600;color:var(--plum)}
-.scale button.on{background:var(--mag);border-color:var(--mag);color:#fff}
-.ends{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);margin-top:3px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.scale button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 7px;border:1.5px solid #EBD3E3;background:#fffafd;border-radius:16px;color:var(--plum);transition:transform .15s,background .15s}
+.scale button .e{font-size:26px;line-height:1;filter:grayscale(.7) opacity(.55);transition:filter .15s}
+.scale button .t{font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--mut)}
+.scale button.on{background:linear-gradient(180deg,#FFE7F5,#F9C9E6);border-color:var(--mag);transform:translateY(-2px);box-shadow:0 6px 14px rgba(176,24,122,.22)}
+.scale button.on .e{filter:none;transform:scale(1.12)}
+.scale button.on .t{color:var(--mag)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{padding:10px 14px;border-radius:999px;border:1.5px solid #E3C3D8;background:#fffafd;font-size:15px;color:var(--plum);font-weight:600}
 .chip.on{background:var(--plum);border-color:var(--plum);color:#fff}
@@ -115,11 +118,14 @@ async function sync(){
 }
 function go(step){S.step=step;persist();render();window.scrollTo(0,0)}
 
+const STAGES=[['🌱','Seed'],['🌿','Sprout'],['🌷','Bud'],['🌸','Bloom'],['🌺','Radiant']];
 function scale(g,i,val){
   let h='<div class="scale">';
-  for(let n=1;n<=10;n++)h+=`<button type="button" class="n${val===n?' on':''}" data-g="${g}" data-i="${i}" data-v="${n}">${n}</button>`;
-  return h+'</div><div class="ends"><span>Not at all</span><span>Absolutely</span></div>';
+  STAGES.forEach((st,k)=>{const n=k+1;
+    h+=`<button type="button" class="n${val===n*2?' on':''}" data-g="${g}" data-i="${i}" data-v="${n}" aria-label="${st[1]}"><span class="e">${st[0]}</span><span class="t">${st[1]}</span></button>`});
+  return h+'</div>';
 }
+const stage=v=>STAGES[Math.max(0,Math.min(4,Math.round(v/2)-1))];
 
 function render(){
   $('#bar').style.width=(STEPS.indexOf(S.step)*25+(S.step==='res'?0:8))+'%';
@@ -141,11 +147,11 @@ function gate(){return `<div class="card">
 <div class="err" id="err"></div>
 <button class="btn" id="start">Start</button></div>`}
 
-function pre(){return `<div class="card"><h2>Part 1 · Right now</h2><p class="sub">How do you feel today? Tap a number from 1 to 10.</p>
+function pre(){return `<div class="card"><h2>Part 1 · Right now</h2><p class="sub">How does it feel today? Tap the flower that matches you, from a tiny seed 🌱 to a radiant bloom 🌺.</p>
 ${PULSE.map((p,i)=>`<div class="q"><p>${p}</p>${scale('pre',i,S.pre[i])}</div>`).join('')}
 <button class="btn" id="next" ${done(S.pre)?'':'disabled'}>Next</button></div>`}
 
-function wheel(){return `<div class="card"><h2>Part 2 · Your Wheel of Life</h2><p class="sub">How satisfied are you in each area today? 1 = very low, 10 = excellent. Be honest, nobody sees this but you.</p>
+function wheel(){return `<div class="card"><h2>Part 2 · Your Wheel of Life</h2><p class="sub">How is each area of your life blooming today? Tap the stage that fits. Be honest, nobody sees this but you.</p>
 ${AREAS.map((x,i)=>`<div class="q"><p>${x.l}</p>${scale('wheel',i,S.wheel[i])}</div>`).join('')}
 <button class="btn" id="next" ${done(S.wheel)?'':'disabled'}>Next</button></div>`}
 
@@ -176,9 +182,9 @@ function results(){
   h+=`<div class="card"><div class="eyebrow">Your Potentia snapshot</div><h2>${esc(S.name||'Your result')}, this is your wheel</h2>
 ${radar(w)}
 <div class="row"><div><div class="big">${avg}<small style="font-size:16px;color:var(--mut)"> /10</small></div><div class="sub" style="margin:2px 0 0">Your life balance today</div></div></div></div>`;
-  h+=`<div class="card"><h2>✨ Where you shine</h2>${top.map(i=>`<span class="pill">${AREAS[i].l} · ${w[i]}</span>`).join('')}
+  h+=`<div class="card"><h2>✨ Where you shine</h2>${top.map(i=>`<span class="pill">${AREAS[i].l} · ${stage(w[i])[0]} ${stage(w[i])[1]}</span>`).join('')}
 <h2 style="margin-top:16px">🌱 Your top strengths</h2>${S.strengths.map(s=>`<span class="pill">${esc(s)}</span>`).join('')}</div>`;
-  h+=`<div class="card"><h2>🎯 Room to grow</h2><p class="sub">Small steps in these two areas will lift your whole wheel.</p>${low.map(i=>`<div class="tip"><b>${AREAS[i].l} (${w[i]}/10)</b><br>${AREAS[i].tip}</div>`).join('')}
+  h+=`<div class="card"><h2>🎯 Room to grow</h2><p class="sub">Small steps in these two areas will lift your whole wheel.</p>${low.map(i=>`<div class="tip"><b>${AREAS[i].l} · ${stage(w[i])[0]} ${stage(w[i])[1]}</b><br>${AREAS[i].tip}</div>`).join('')}
 <p class="sub" style="margin-top:12px">This is a reflection tool, not a diagnosis. Your potential is far bigger than any number.</p></div>`;
   h+=pulseCard();
   h+='<button class="link" id="fresh">Not you? Start a new response</button>';
@@ -188,7 +194,7 @@ ${radar(w)}
 function pulseCard(){
   if(done(S.post)){
     return `<div class="card"><h2>📈 Your before &amp; after</h2><p class="sub">How you felt at the start vs. after the class.</p><div class="cmp">
-<b></b><b>Before</b><b>After</b><b></b>${PULSE.map((p,i)=>{const d=S.post[i]-S.pre[i];return `<span>${p}</span><span>${S.pre[i]}</span><span><b>${S.post[i]}</b></span><span class="${d>0?'up':'flat'}">${d>0?'▲ +'+d:d<0?'▼ '+d:'–'}</span>`}).join('')}</div></div>`;
+<b></b><b>Before</b><b>After</b><b></b>${PULSE.map((p,i)=>{const d=(S.post[i]-S.pre[i])/2;return `<span>${p}</span><span style="font-size:22px">${stage(S.pre[i])[0]}</span><span style="font-size:22px">${stage(S.post[i])[0]}</span><span class="${d>0?'up':'flat'}">${d>0?'▲ grew':d<0?'▼':'–'}</span>`}).join('')}</div></div>`;
   }
   if(!showPost)return `<div class="card"><h2>🕒 After the class</h2><p class="sub">When Rushna finishes, come back to this page and re-rate 3 quick questions to see how far you have moved.</p><button class="btn alt" id="openpost">The class is finished – re-rate now</button></div>`;
   return `<div class="card"><h2>After the class</h2><p class="sub">How do you feel <b>now</b>?</p>${PULSE.map((p,i)=>`<div class="q"><p>${p}</p>${scale('post',i,S.post[i])}</div>`).join('')}<button class="btn" id="savepost" ${done(S.post)?'':'disabled'}>See my progress</button></div>`;
@@ -204,7 +210,7 @@ function normPhone(v){
 document.addEventListener('click',async e=>{
   const t=e.target.closest('button,input');if(!t)return;
   if(t.classList.contains('n')){
-    const{g,i,v}=t.dataset;S[g][+i]=+v;persist();
+    const{g,i,v}=t.dataset;S[g][+i]=+v*2;persist();
     t.parentElement.querySelectorAll('.n').forEach(b=>b.classList.toggle('on',b===t));
     const nx=$('#next')||$('#savepost');if(nx)nx.disabled=!done(S[g]);return;
   }
