@@ -54,6 +54,7 @@ input:focus{outline:2px solid var(--mag);border-color:transparent}
 .up{color:var(--ok);font-weight:800}.flat{color:var(--mut)}
 .wa{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:14px;background:#25D366;color:#fff;font-size:17px;font-weight:700;text-decoration:none;margin-top:12px;box-shadow:0 6px 16px rgba(37,211,102,.35)}
 .wa svg{width:24px;height:24px;fill:#fff}
+.sep{text-align:center;color:var(--mut);font-size:13px;margin:16px 0 0}
 .foot{font-size:12px;color:var(--mut);text-align:center;margin-top:18px}
 .link{background:none;border:0;color:var(--mut);text-decoration:underline;font-size:13px;padding:8px;display:block;margin:6px auto 0}
 .banner{background:#FFF3CD;color:#6B5200;border-radius:12px;padding:10px 12px;font-size:14px;margin-bottom:12px}
@@ -111,6 +112,12 @@ async function api(b){
   if(!r.ok) throw new Error((j&&j.message)||'Something went wrong');
   return {ok:true,id:j};
 }
+async function lookup(wa){
+  const r=await fetch(SB+'/rest/v1/rpc/potentia_lookup',{method:'POST',headers:{'Content-Type':'application/json',apikey:SBK,Authorization:'Bearer '+SBK},body:JSON.stringify({p_whatsapp:wa})});
+  const j=await r.json().catch(()=>null);
+  if(!r.ok) throw new Error((j&&j.message)||'Something went wrong');
+  return j;
+}
 async function sync(){
   try{
     await api({id:S.id,pre:S.pre,wheel:S.wheel,post:S.post,strengths:S.strengths});
@@ -130,12 +137,15 @@ function scale(g,i,val){
 const stage=v=>STAGES[Math.max(0,Math.min(4,Math.round(v/2)-1))];
 
 function render(){
-  $('#bar').style.width=(STEPS.indexOf(S.step)*25+(S.step==='res'?0:8))+'%';
+  const pi=STEPS.indexOf(S.step);$('#bar').style.width=(pi>=0?pi*25+(S.step==='res'?0:8):(S.step==='p2done'?100:55))+'%';
   const a=$('#app');
   if(S.step==='gate')a.innerHTML=gate();
   else if(S.step==='pre')a.innerHTML=pre();
   else if(S.step==='wheel')a.innerHTML=wheel();
   else if(S.step==='str')a.innerHTML=str();
+  else if(S.step==='p2')a.innerHTML=p2();
+  else if(S.step==='p2rate')a.innerHTML=p2rate();
+  else if(S.step==='p2done')a.innerHTML=p2done();
   else a.innerHTML=results();
 }
 
@@ -147,7 +157,9 @@ function gate(){return `<div class="card">
 <label class="chk"><input id="c1" type="checkbox"><span>I agree to GrowthSpace saving my answers so I can see my result. <b>(required)</b></span></label>
 <label class="chk"><input id="c2" type="checkbox"><span>GrowthSpace may message me on WhatsApp about future programs. <i>(optional)</i></span></label>
 <div class="err" id="err"></div>
-<button class="btn" id="start">Start</button></div>`}
+<button class="btn" id="start">Start</button>
+<div class="sep">Already attended the class?</div>
+<button class="btn alt" id="p2" style="margin-top:8px">🌸 Part 2 · After-class check</button></div>`}
 
 function pre(){return `<div class="card"><h2>Part 1 · Right now</h2><p class="sub">How does it feel today? Tap the flower that matches you, from a tiny seed 🌱 to a radiant bloom 🌺.</p>
 ${PULSE.map((p,i)=>`<div class="q"><p>${p}</p>${scale('pre',i,S.pre[i])}</div>`).join('')}
@@ -204,6 +216,20 @@ function pulseCard(){
   return `<div class="card"><h2>After the class</h2><p class="sub">How do you feel <b>now</b>?</p>${PULSE.map((p,i)=>`<div class="q"><p>${p}</p>${scale('post',i,S.post[i])}</div>`).join('')}<button class="btn" id="savepost" ${done(S.post)?'':'disabled'}>See my progress</button></div>`;
 }
 
+
+function joinCard(){return `<div class="card" style="text-align:center"><h2>💗 Join our ladies community</h2><p class="sub" style="margin-bottom:0">Stay connected with inspiring women, events and growth tips from GrowthSpace.</p>
+<a class="wa" href="https://chat.whatsapp.com/KGokubgnoagAupBrJgRKLk" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24s8.24 3.7 8.24 8.24-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.23-.16-.48-.29z"/></svg>Join on WhatsApp</a></div>`}
+
+function p2(){return `<div class="card"><h2>Part 2 · After the class 🌸</h2><p class="sub">Welcome back! Enter the same WhatsApp number you used in Part 1.</p>
+<label for="wa2">WhatsApp number</label><input id="wa2" type="tel" inputmode="tel" autocomplete="tel" placeholder="+966 5X XXX XXXX">
+<div class="err" id="err2"></div><button class="btn" id="p2go">Continue</button><button class="link" id="p2back">← Back</button></div>`}
+
+function p2rate(){return `<div class="card"><h2>Welcome back, ${esc(S.name||'')} 🌷</h2><p class="sub">Now that the class is done, how do you feel <b>today</b>? Tap the flower that matches you.</p>
+${PULSE.map((p,i)=>`<div class="q"><p>${p}</p>${scale('post',i,S.post[i])}</div>`).join('')}
+<div class="err" id="err2"></div><button class="btn" id="p2save" ${done(S.post)?'':'disabled'}>See my progress</button></div>`}
+
+function p2done(){return `${saveOK?'':'<div class="banner">Your answers are not saved yet (connection issue). <button class="link" id="p2retry" style="display:inline;padding:0">Tap to retry</button></div>'}${pulseCard()}${joinCard()}<button class="link" id="p2home">← Back to start</button>`}
+
 function normPhone(v){
   let d=v.replace(/[^\d+]/g,'');
   if(d.startsWith('00'))d='+'+d.slice(2);
@@ -216,7 +242,7 @@ document.addEventListener('click',async e=>{
   if(t.classList.contains('n')){
     const{g,i,v}=t.dataset;S[g][+i]=+v*2;persist();
     t.parentElement.querySelectorAll('.n').forEach(b=>b.classList.toggle('on',b===t));
-    const nx=$('#next')||$('#savepost');if(nx)nx.disabled=!done(S[g]);return;
+    const nx=$('#next')||$('#savepost')||$('#p2save');if(nx)nx.disabled=!done(S[g]);return;
   }
   if(t.classList.contains('chip')){
     const s=t.dataset.s,k=S.strengths.indexOf(s);
@@ -224,6 +250,22 @@ document.addEventListener('click',async e=>{
     persist();document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',S.strengths.includes(c.dataset.s)));
     $('#cnt').textContent=S.strengths.length+'/5';$('#next').disabled=S.strengths.length!==5;return;
   }
+  if(t.id==='p2'){
+    if(S.id&&done(S.pre)&&done(S.wheel)){showPost=true;go('res');return}
+    go('p2');return;
+  }
+  if(t.id==='p2back'){go('gate');return}
+  if(t.id==='p2go'){
+    const wa=normPhone($('#wa2').value),err=$('#err2');
+    if(wa.replace(/\D/g,'').length<8){err.textContent='Please enter a valid WhatsApp number with country code.';return}
+    err.textContent='';t.disabled=true;t.textContent='Checking…';
+    try{const j=await lookup(wa);S.id=j.id;S.name=j.name;S.pre=j.pre;S.post=[null,null,null];go('p2rate')}
+    catch(x){err.textContent=x.message;t.disabled=false;t.textContent='Continue'}
+    return;
+  }
+  if(t.id==='p2save'){t.disabled=true;await sync();go('p2done');return}
+  if(t.id==='p2retry'){await sync();render();return}
+  if(t.id==='p2home'){go('gate');return}
   if(t.id==='start'){
     const name=$('#nm').value.trim(),wa=normPhone($('#wa').value),err=$('#err');
     if(name.length<2){err.textContent='Please enter your name.';return}
