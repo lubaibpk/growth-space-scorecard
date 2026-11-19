@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Potentia – Discover the Power Within</title>
+<style>
+:root{--plum:#5E1B63;--mag:#B0187A;--pink:#FBE4F3;--bg:#FFF6FB;--ink:#2B1030;--mut:#7A5E80;--ok:#1E8A5A}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:linear-gradient(180deg,#FDE9F5,#FFF6FB 40%);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:520px;margin:0 auto;padding:16px 16px 48px}
+header{text-align:center;padding:8px 0 4px}
+.logo{display:block;margin:0 auto 10px;width:200px;max-width:60%;height:auto;background:#fff;border-radius:16px;padding:6px 10px;box-shadow:0 4px 16px rgba(94,27,99,.08)}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+h1{margin:4px 0 0;font-size:34px;line-height:1.1;color:var(--plum);letter-spacing:.02em}
+h1 span{color:var(--mag)}
+.tag{margin:4px 0 0;font-style:italic;color:var(--mut)}
+.bar{height:6px;background:#F1D3E6;border-radius:9px;margin:14px 0;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mag),var(--plum));transition:width .4s}
+.card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 6px 22px rgba(94,27,99,.09);margin-bottom:14px}
+h2{margin:0 0 4px;font-size:21px;color:var(--plum)}
+.sub{margin:0 0 14px;color:var(--mut);font-size:14px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+input[type=text],input[type=tel]{width:100%;padding:13px 14px;font-size:16px;border:1.5px solid #E3C3D8;border-radius:12px;background:#fffafd;color:var(--ink)}
+input:focus{outline:2px solid var(--mag);border-color:transparent}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:13.5px;margin:12px 0}
+.chk input{margin-top:4px;width:18px;height:18px;accent-color:var(--mag);flex:none}
+.hint{font-size:12.5px;color:var(--mut);margin-top:4px}
+.btn{display:block;width:100%;padding:15px;border:0;border-radius:14px;font-size:17px;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--mag),var(--plum));margin-top:14px}
+.btn:disabled{opacity:.4}
+.btn.alt{background:#fff;color:var(--plum);border:1.5px solid var(--plum)}
+.err{color:#B3261E;font-size:14px;margin-top:8px;min-height:18px}
+.q{margin:0 0 18px}
+.q p{margin:0 0 8px;font-weight:600}
+.q small{display:block;font-weight:400;color:var(--mut);font-size:12.5px}
+.scale{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.scale button{padding:9px 0;border:1.5px solid #E3C3D8;background:#fffafd;border-radius:9px;font-size:14px;font-weight:600;color:var(--plum)}
+.scale button.on{background:var(--mag);border-color:var(--mag);color:#fff}
+.ends{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);margin-top:3px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 14px;border-radius:999px;border:1.5px solid #E3C3D8;background:#fffafd;font-size:15px;color:var(--plum);font-weight:600}
+.chip.on{background:var(--plum);border-color:var(--plum);color:#fff}
+.count{font-weight:700;color:var(--mag)}
+.big{font-size:40px;font-weight:800;color:var(--mag);line-height:1}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.pill{display:inline-block;padding:6px 12px;border-radius:999px;background:var(--pink);color:var(--plum);font-weight:700;font-size:14px;margin:3px 4px 3px 0}
+.tip{border-left:4px solid var(--mag);background:#FFF1F9;padding:10px 12px;border-radius:0 10px 10px 0;margin:10px 0;font-size:14.5px}
+.tip b{color:var(--plum)}
+.cmp{display:grid;grid-template-columns:1fr auto auto auto;gap:6px 10px;align-items:center;font-size:14px}
+.up{color:var(--ok);font-weight:800}.flat{color:var(--mut)}
+.foot{font-size:12px;color:var(--mut);text-align:center;margin-top:18px}
+.link{background:none;border:0;color:var(--mut);text-decoration:underline;font-size:13px;padding:8px;display:block;margin:6px auto 0}
+.banner{background:#FFF3CD;color:#6B5200;border-radius:12px;padding:10px 12px;font-size:14px;margin-bottom:12px}
+svg text{font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img class="logo" src="/potentia/growthspace-logo.png" alt="GrowthSpace – Time for Greatness" width="640" height="398">
+    <div class="eyebrow">Himmah · Her Voice</div>
+    <h1>POTEN<span>TIA</span></h1>
+    <p class="tag">Discover the Power Within</p>
+    <div class="eyebrow" style="margin-top:6px">with Rushna P · Founder &amp; CEO, GrowthSpace</div>
+  </header>
+  <div class="bar"><i id="bar"></i></div>
+  <main id="app"></main>
+  <p class="foot">Your answers are private. Only you see your result.</p>
+</div>
+
+<script>
+const AREAS=[
+ {s:'Faith',l:'Faith & inner peace',tip:'Set aside 10 quiet minutes each day for dua, dhikr or reflection – before the day gets busy.'},
+ {s:'Health',l:'Health & energy',tip:'A 15-minute daily walk and a fixed bedtime lift your energy faster than any big plan.'},
+ {s:'Family',l:'Family & home',tip:'Protect one phone-free hour with your family this week and make it a habit.'},
+ {s:'Friends',l:'Relationships',tip:'Message one friend you have lost touch with today – connection grows by small steps.'},
+ {s:'Purpose',l:'Career & purpose',tip:'Write one sentence: "The work that would feel meaningful to me is…" then take one small step.'},
+ {s:'Money',l:'Finances',tip:'Track your income and spending for just one week. Awareness always comes first.'},
+ {s:'Growth',l:'Learning & growth',tip:'Choose one skill and give it 20 minutes a day for 30 days.'},
+ {s:'Calm',l:'Emotional well-being',tip:'Name your feeling out loud, then take 5 slow breaths. Repeat whenever you feel overwhelmed.'}
+];
+const PULSE=['I feel confident in my own abilities','I am clear about what I want in the next year','I feel motivated to take action'];
+const STRENGTHS=['Faith','Patience','Resilience','Empathy','Creativity','Leadership','Discipline','Kindness','Communication','Courage','Wisdom','Gratitude','Organising','Curiosity','Determination','Guiding others','Generosity','Humility','Positivity','Problem-solving'];
+const STEPS=['gate','pre','wheel','str','res'];
+const KEY='potentia_v1';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let S=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch{return{}}})();
+S.pre=S.pre||[null,null,null];S.wheel=S.wheel||Array(8).fill(null);S.post=S.post||[null,null,null];S.strengths=S.strengths||[];S.step=S.step||'gate';
+let saveOK=true,showPost=false;
+const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const done=a=>a.every(v=>v!=null);
+
+const SB='https://iwcemrkrsptvwkpcmwqh.supabase.co';
+const SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3Y2Vtcmtyc3B0dndrcGNtd3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODM4NzksImV4cCI6MjA5NDk1OTg3OX0.Pg6Yh6klRhGt5MQUnebrfcygQNFMmgOhPuudSzd8iZA';
+async function api(b){
+  const full=a=>Array.isArray(a)&&a.length&&done(a)?a:null;
+  const r=await fetch(SB+'/rest/v1/rpc/potentia_save',{method:'POST',
+    headers:{'Content-Type':'application/json',apikey:SBK,Authorization:'Bearer '+SBK},
+    body:JSON.stringify({p_id:b.id||null,p_name:b.name||null,p_whatsapp:b.whatsapp||null,
+      p_consent:!!b.consent,p_contact_ok:!!b.contactOk,
+      p_pre:full(b.pre),p_wheel:full(b.wheel),p_post:full(b.post),
+      p_strengths:Array.isArray(b.strengths)&&b.strengths.length===5?b.strengths:null})});
+  const j=await r.json().catch(()=>null);
+  if(!r.ok) throw new Error((j&&j.message)||'Something went wrong');
+  return {ok:true,id:j};
+}
+async function sync(){
+  try{
+    await api({id:S.id,pre:S.pre,wheel:S.wheel,post:S.post,strengths:S.strengths});
+    saveOK=true;
+  }catch(e){saveOK=false}
+  return saveOK;
+}
+function go(step){S.step=step;persist();render();window.scrollTo(0,0)}
+
+function scale(g,i,val){
+  let h='<div class="scale">';
+  for(let n=1;n<=10;n++)h+=`<button type="button" class="n${val===n?' on':''}" data-g="${g}" data-i="${i}" data-v="${n}">${n}</button>`;
+  return h+'</div><div class="ends"><span>Not at all</span><span>Absolutely</span></div>';
+}
+
+function render(){
+  $('#bar').style.width=(STEPS.indexOf(S.step)*25+(S.step==='res'?0:8))+'%';
+  const a=$('#app');
+  if(S.step==='gate')a.innerHTML=gate();
+  else if(S.step==='pre')a.innerHTML=pre();
+  else if(S.step==='wheel')a.innerHTML=wheel();
+  else if(S.step==='str')a.innerHTML=str();
+  else a.innerHTML=results();
+}
+
+function gate(){return `<div class="card">
+<h2>Welcome 🌸</h2><p class="sub">A 6-minute reflection to see where you shine and where to grow. You will get your personal result at the end.</p>
+<label for="nm">Your name</label><input id="nm" type="text" autocomplete="name" placeholder="e.g. Fathima">
+<label for="wa">WhatsApp number</label><input id="wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="+966 5X XXX XXXX">
+<div class="hint">Please include your country code (e.g. +966 for Saudi, +91 for India).</div>
+<label class="chk"><input id="c1" type="checkbox"><span>I agree to GrowthSpace saving my answers so I can see my result. <b>(required)</b></span></label>
+<label class="chk"><input id="c2" type="checkbox"><span>GrowthSpace may message me on WhatsApp about future programs. <i>(optional)</i></span></label>
+<div class="err" id="err"></div>
+<button class="btn" id="start">Start</button></div>`}
+
+function pre(){return `<div class="card"><h2>Part 1 · Right now</h2><p class="sub">How do you feel today? Tap a number from 1 to 10.</p>
+${PULSE.map((p,i)=>`<div class="q"><p>${p}</p>${scale('pre',i,S.pre[i])}</div>`).join('')}
+<button class="btn" id="next" ${done(S.pre)?'':'disabled'}>Next</button></div>`}
+
+function wheel(){return `<div class="card"><h2>Part 2 · Your Wheel of Life</h2><p class="sub">How satisfied are you in each area today? 1 = very low, 10 = excellent. Be honest, nobody sees this but you.</p>
+${AREAS.map((x,i)=>`<div class="q"><p>${x.l}</p>${scale('wheel',i,S.wheel[i])}</div>`).join('')}
+<button class="btn" id="next" ${done(S.wheel)?'':'disabled'}>Next</button></div>`}
+
+function str(){return `<div class="card"><h2>Part 3 · Your strengths</h2><p class="sub">Choose the <b>5</b> that describe you best. <span class="count" id="cnt">${S.strengths.length}/5</span></p>
+<div class="chips">${STRENGTHS.map(s=>`<button type="button" class="chip${S.strengths.includes(s)?' on':''}" data-s="${esc(s)}">${esc(s)}</button>`).join('')}</div>
+<button class="btn" id="next" ${S.strengths.length===5?'':'disabled'}>See my result</button></div>`}
+
+function radar(w){
+  const cx=150,cy=150,R=95;let rings='',axes='',labels='',pts=[];
+  [2,4,6,8,10].forEach(v=>{rings+=`<polygon points="${AREAS.map((_,i)=>pt(i,R*v/10)).join(' ')}" fill="none" stroke="#EAD0E1" stroke-width="1"/>`});
+  function pt(i,r){const a=(-90+i*45)*Math.PI/180;return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1)}
+  AREAS.forEach((x,i)=>{
+    axes+=`<line x1="${cx}" y1="${cy}" x2="${pt(i,R).split(',')[0]}" y2="${pt(i,R).split(',')[1]}" stroke="#EAD0E1"/>`;
+    const a=(-90+i*45)*Math.PI/180,lx=cx+(R+24)*Math.cos(a),ly=cy+(R+24)*Math.sin(a)+4;
+    const anc=Math.cos(a)>.3?'start':Math.cos(a)<-.3?'end':'middle';
+    labels+=`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" font-size="12" font-weight="600" fill="#5E1B63" text-anchor="${anc}">${x.s}</text>`;
+    pts.push(pt(i,R*w[i]/10));
+  });
+  return `<svg viewBox="-30 0 360 300" width="100%" role="img" aria-label="Your wheel of life">${rings}${axes}<polygon points="${pts.join(' ')}" fill="rgba(176,24,122,.28)" stroke="#B0187A" stroke-width="2.5"/>${pts.map(p=>`<circle cx="${p.split(',')[0]}" cy="${p.split(',')[1]}" r="3.5" fill="#B0187A"/>`).join('')}${labels}</svg>`;
+}
+
+function results(){
+  const w=S.wheel,avg=(w.reduce((a,b)=>a+b,0)/8).toFixed(1);
+  const idx=w.map((v,i)=>i).sort((a,b)=>w[b]-w[a]||a-b);
+  const top=idx.slice(0,2),low=idx.slice(-2).reverse();
+  let h='';
+  if(!saveOK)h+='<div class="banner">Your answers are not saved yet (connection issue). <button class="link" id="retry" style="display:inline;padding:0">Tap to retry</button></div>';
+  h+=`<div class="card"><div class="eyebrow">Your Potentia snapshot</div><h2>${esc(S.name||'Your result')}, this is your wheel</h2>
+${radar(w)}
+<div class="row"><div><div class="big">${avg}<small style="font-size:16px;color:var(--mut)"> /10</small></div><div class="sub" style="margin:2px 0 0">Your life balance today</div></div></div></div>`;
+  h+=`<div class="card"><h2>✨ Where you shine</h2>${top.map(i=>`<span class="pill">${AREAS[i].l} · ${w[i]}</span>`).join('')}
+<h2 style="margin-top:16px">🌱 Your top strengths</h2>${S.strengths.map(s=>`<span class="pill">${esc(s)}</span>`).join('')}</div>`;
+  h+=`<div class="card"><h2>🎯 Room to grow</h2><p class="sub">Small steps in these two areas will lift your whole wheel.</p>${low.map(i=>`<div class="tip"><b>${AREAS[i].l} (${w[i]}/10)</b><br>${AREAS[i].tip}</div>`).join('')}
+<p class="sub" style="margin-top:12px">This is a reflection tool, not a diagnosis. Your potential is far bigger than any number.</p></div>`;
+  h+=pulseCard();
+  h+='<button class="link" id="fresh">Not you? Start a new response</button>';
+  return h;
+}
+
+function pulseCard(){
+  if(done(S.post)){
+    return `<div class="card"><h2>📈 Your before &amp; after</h2><p class="sub">How you felt at the start vs. after the class.</p><div class="cmp">
+<b></b><b>Before</b><b>After</b><b></b>${PULSE.map((p,i)=>{const d=S.post[i]-S.pre[i];return `<span>${p}</span><span>${S.pre[i]}</span><span><b>${S.post[i]}</b></span><span class="${d>0?'up':'flat'}">${d>0?'▲ +'+d:d<0?'▼ '+d:'–'}</span>`}).join('')}</div></div>`;
+  }
+  if(!showPost)return `<div class="card"><h2>🕒 After the class</h2><p class="sub">When Rushna finishes, come back to this page and re-rate 3 quick questions to see how far you have moved.</p><button class="btn alt" id="openpost">The class is finished – re-rate now</button></div>`;
+  return `<div class="card"><h2>After the class</h2><p class="sub">How do you feel <b>now</b>?</p>${PULSE.map((p,i)=>`<div class="q"><p>${p}</p>${scale('post',i,S.post[i])}</div>`).join('')}<button class="btn" id="savepost" ${done(S.post)?'':'disabled'}>See my progress</button></div>`;
+}
+
+function normPhone(v){
+  let d=v.replace(/[^\d+]/g,'');
+  if(d.startsWith('00'))d='+'+d.slice(2);
+  else if(/^05\d{8}$/.test(d))d='+966'+d.slice(1);
+  return d;
+}
+
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('button,input');if(!t)return;
+  if(t.classList.contains('n')){
+    const{g,i,v}=t.dataset;S[g][+i]=+v;persist();
+    t.parentElement.querySelectorAll('.n').forEach(b=>b.classList.toggle('on',b===t));
+    const nx=$('#next')||$('#savepost');if(nx)nx.disabled=!done(S[g]);return;
+  }
+  if(t.classList.contains('chip')){
+    const s=t.dataset.s,k=S.strengths.indexOf(s);
+    if(k>=0)S.strengths.splice(k,1);else if(S.strengths.length<5)S.strengths.push(s);
+    persist();document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',S.strengths.includes(c.dataset.s)));
+    $('#cnt').textContent=S.strengths.length+'/5';$('#next').disabled=S.strengths.length!==5;return;
+  }
+  if(t.id==='start'){
+    const name=$('#nm').value.trim(),wa=normPhone($('#wa').value),err=$('#err');
+    if(name.length<2){err.textContent='Please enter your name.';return}
+    if(wa.replace(/\D/g,'').length<8){err.textContent='Please enter a valid WhatsApp number with country code.';return}
+    if(!$('#c1').checked){err.textContent='Please tick the required box to continue.';return}
+    err.textContent='';t.disabled=true;t.textContent='Starting…';
+    try{const j=await api({name,whatsapp:wa,consent:true,contactOk:$('#c2').checked});S.id=j.id;S.name=name;go('pre')}
+    catch(x){err.textContent=x.message;t.disabled=false;t.textContent='Start'}
+    return;
+  }
+  if(t.id==='next'){
+    const cur=S.step,nxt={pre:'wheel',wheel:'str',str:'res'}[cur];
+    t.disabled=true;await sync();go(nxt);return;
+  }
+  if(t.id==='openpost'){showPost=true;render();return}
+  if(t.id==='savepost'){t.disabled=true;await sync();render();return}
+  if(t.id==='retry'){await sync();render();return}
+  if(t.id==='fresh'){if(confirm('Start a new response on this phone?')){localStorage.removeItem(KEY);location.reload()}}
+});
+render();
+</script>
+</body>
+</html>

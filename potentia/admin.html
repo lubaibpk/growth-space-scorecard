@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Potentia – Responses</title>
+<style>
+body{margin:0;font:15px/1.45 system-ui,sans-serif;background:#FFF6FB;color:#2B1030}
+.w{max-width:1000px;margin:0 auto;padding:16px}
+h1{color:#5E1B63;margin:0 0 4px}
+input,button{font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid #E3C3D8}
+button{background:#5E1B63;color:#fff;border:0;font-weight:700;cursor:pointer}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.s{background:#fff;border-radius:14px;padding:10px 16px;box-shadow:0 3px 12px rgba(94,27,99,.08)}
+.s b{display:block;font-size:24px;color:#B0187A}
+.tbl{overflow-x:auto;background:#fff;border-radius:14px;box-shadow:0 3px 12px rgba(94,27,99,.08)}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid #F3E1EC;font-size:14px;vertical-align:top}
+th{background:#FBE4F3;color:#5E1B63}
+a{color:#B0187A;font-weight:700;text-decoration:none}
+.err{color:#B3261E}
+</style>
+</head>
+<body><div class="w">
+<h1>Potentia responses</h1>
+<div id="login"><p>Enter the admin key.</p><input id="k" type="password" placeholder="Admin key"> <button id="go">Open</button><p class="err" id="e"></p></div>
+<div id="out" hidden>
+  <div class="stats" id="stats"></div>
+  <p><button id="csv">Download CSV</button> <button id="rf" style="background:#B0187A">Refresh</button></p>
+  <div class="tbl"><table><thead><tr><th>Name</th><th>WhatsApp</th><th>Balance</th><th>Strengths</th><th>Pulse before → after</th><th>OK to contact</th></tr></thead><tbody id="tb"></tbody></table></div>
+</div>
+</div>
+<script>
+const SB='https://iwcemrkrsptvwkpcmwqh.supabase.co';
+const SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3Y2Vtcmtyc3B0dndrcGNtd3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODM4NzksImV4cCI6MjA5NDk1OTg3OX0.Pg6Yh6klRhGt5MQUnebrfcygQNFMmgOhPuudSzd8iZA';
+const AREAS=['Faith & inner peace','Health & energy','Family & home','Relationships','Career & purpose','Finances','Learning & growth','Emotional well-being'];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let K=sessionStorage.getItem('pk')||'',R=[];
+const avg=a=>a&&a.length?(a.reduce((x,y)=>x+y,0)/a.length):null;
+const cell=v=>{let s=String(v??'');if(/^[=+\-@\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
+async function load(){
+  $('#e').textContent='';
+  let r;
+  try{r=await fetch(SB+'/rest/v1/rpc/potentia_admin',{method:'POST',headers:{'Content-Type':'application/json',apikey:SBK,Authorization:'Bearer '+SBK},body:JSON.stringify({p_key:K})})}catch{$('#e').textContent='Network error.';return}
+  if(!r.ok){sessionStorage.removeItem('pk');$('#login').hidden=false;$('#out').hidden=true;$('#e').textContent='Wrong key or server error.';return}
+  sessionStorage.setItem('pk',K);
+  R=await r.json();
+  $('#login').hidden=true;$('#out').hidden=false;
+  const done=R.filter(x=>x.wheel&&x.strengths).length,post=R.filter(x=>x.post).length;
+  const bal=avg(R.filter(x=>x.wheel).map(x=>avg(x.wheel)));
+  $('#stats').innerHTML=`<div class="s"><b>${R.length}</b>Started</div><div class="s"><b>${done}</b>Completed</div><div class="s"><b>${post}</b>Did after-class pulse</div><div class="s"><b>${bal?bal.toFixed(1):'–'}</b>Avg balance /10</div>`;
+  $('#tb').innerHTML=R.map(x=>{
+    const b=avg(x.pre),a=avg(x.post),wa=String(x.whatsapp||'').replace(/\D/g,'');
+    return `<tr><td>${esc(x.name)}</td><td><a href="https://wa.me/${wa}" target="_blank" rel="noopener">+${wa}</a></td><td>${x.wheel?avg(x.wheel).toFixed(1):'–'}</td><td>${esc((x.strengths||[]).join(', '))||'–'}</td><td>${b?b.toFixed(1):'–'} → ${a?a.toFixed(1):'–'}</td><td>${x.contact_ok?'Yes':'No'}</td></tr>`}).join('');
+}
+$('#go').onclick=()=>{K=$('#k').value.trim();load()};
+$('#rf').onclick=load;
+$('#csv').onclick=()=>{
+  const head=['Name','WhatsApp','Contact OK','Started',...AREAS,'Strengths','Pulse1 before','Pulse2 before','Pulse3 before','Pulse1 after','Pulse2 after','Pulse3 after'];
+  const rows=R.map(r=>[r.name,String(r.whatsapp||'').replace(/^\+/,''),r.contact_ok?'Yes':'No',r.created_at,
+    ...AREAS.map((_,i)=>r.wheel?r.wheel[i]:''),(r.strengths||[]).join('; '),
+    ...[0,1,2].map(i=>r.pre?r.pre[i]:''),...[0,1,2].map(i=>r.post?r.post[i]:'')].map(cell).join(','));
+  const blob=new Blob(['﻿'+[head.map(cell).join(','),...rows].join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='potentia-responses.csv';a.click();
+};
+if(K)load();
+</script>
+</body>
+</html>
