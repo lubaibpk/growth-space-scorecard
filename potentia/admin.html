@@ -24,7 +24,7 @@ a{color:#B0187A;font-weight:700;text-decoration:none}
 </head>
 <body><div class="w">
 <h1>Potentia responses</h1>
-<div id="login"><p>Enter the admin key.</p><input id="k" type="password" placeholder="Admin key"> <button id="go">Open</button><p class="err" id="e"></p></div>
+<div id="login"><p>Enter the admin password.</p><input id="k" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Password"> <button id="go">Open</button><p class="err" id="e"></p></div>
 <div id="out" hidden>
   <div class="stats" id="stats"></div>
   <p><button id="csv">Download CSV</button> <button id="rf" style="background:#B0187A">Refresh</button></p>
@@ -44,9 +44,10 @@ async function load(){
   $('#e').textContent='';
   let r;
   try{r=await fetch(SB+'/rest/v1/rpc/potentia_admin',{method:'POST',headers:{'Content-Type':'application/json',apikey:SBK,Authorization:'Bearer '+SBK},body:JSON.stringify({p_key:K})})}catch{$('#e').textContent='Network error.';return}
-  if(!r.ok){sessionStorage.removeItem('pk');$('#login').hidden=false;$('#out').hidden=true;$('#e').textContent='Wrong key or server error.';return}
+  let j=null;try{j=await r.json()}catch{}
+  if(!r.ok||!Array.isArray(j)){sessionStorage.removeItem('pk');$('#login').hidden=false;$('#out').hidden=true;$('#e').textContent=(j&&j.error)||'Wrong password or server error.';return}
   sessionStorage.setItem('pk',K);
-  R=await r.json();
+  R=j;
   $('#login').hidden=true;$('#out').hidden=false;
   const done=R.filter(x=>x.wheel&&x.strengths).length,post=R.filter(x=>x.post).length;
   const bal=avg(R.filter(x=>x.wheel).map(x=>avg(x.wheel)));
